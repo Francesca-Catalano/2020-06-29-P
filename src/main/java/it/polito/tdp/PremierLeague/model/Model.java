@@ -38,23 +38,25 @@ public class Model {
 	}
 	
 	Graphs.addAllVertices(this.graph, this.dao.listAllV(mese, map));
-	if( this.dao.listAdiacenze(mese, map)== null)
+	if( this.dao.listAdiacenze(mese, map,min)== null)
 	{
 		System.out.print("Errore lettura edge\n");
 		return;
 	}
 
-	for(Adiacenza a : this.dao.listAdiacenze(mese, map)) 
+	for(Adiacenza a : this.dao.listAdiacenze(mese, map,min)) 
 	{
-		if(this.graph.containsVertex(a.getM1()) && this.graph.containsVertex(a.getM2()))
-		{
-			DefaultWeightedEdge e = this.graph.getEdge(a.getM1(), a.getM2());
-			if(e==null)
-					{	
-			Graphs.addEdgeWithVertices(this.graph,a.getM1(), a.getM2(), a.getPeso());
-
-					}
-		}
+		Graphs.addEdgeWithVertices(this.graph,a.getM1(), a.getM2(), a.getPeso());
+			/*
+			 * if(this.graph.containsVertex(a.getM1()) &&
+			 * this.graph.containsVertex(a.getM2())) { DefaultWeightedEdge e =
+			 * this.graph.getEdge(a.getM1(), a.getM2()); if(e==null) {
+			 * Graphs.addEdgeWithVertices(this.graph,a.getM1(), a.getM2(), a.getPeso());
+			 * System.out.print(a.getM1().getMatchID() +" "+ a.getM2().getMatchID() +
+			 * " "+a.getPeso()+"\n");
+			 * 
+			 * } }
+			 */
 	}
 		}
 

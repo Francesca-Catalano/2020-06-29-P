@@ -121,15 +121,19 @@ public class PremierLeagueDAO {
 	}
 	
 	
-	public List<Adiacenza> listAdiacenze(int mese,Map<Integer,Match> map){
-		String sql = "select  a1.MatchID,a2.MatchID,count(distinct a1.PlayerId) as tot " + 
-				"from Actions as a1,Actions as a2 " + 
-				"where a1.MatchID <>  a2.MatchID " + 
+	public List<Adiacenza> listAdiacenze(int mese,Map<Integer,Match> map,int min){
+		String sql = "select  a1.MatchID,a2.MatchID,count(distinct a2.PlayerId) as tot " + 
+				"from Actions as a1,Actions as a2 , Matches  as m1,Matches  as m2 " + 
+				"where a1.MatchID < a2.MatchID " + 
+				"and a1.MatchID=m1.MatchID " + 
+				"and a2.MatchID=m2.MatchID " + 
+				"and month(m1.Date)=? " + 
+				"and month(m2.Date)=? " + 
 				"and a1.PlayerId=a2.PlayerId " + 
-				"and a1.TimePlayed >= ? " + 
-				"and a2.TimePlayed >= ? " + 
+				"and a1.TimePlayed >=? " + 
+				"and a2.TimePlayed >=? " + 
 				"group by a1.MatchID,a2.MatchID " + 
-				"having tot > 0 ";
+				"having tot > 0";
 		List<Adiacenza> result = new ArrayList<>();
 		Connection conn = DBConnect.getConnection();
 
@@ -137,6 +141,8 @@ public class PremierLeagueDAO {
 			PreparedStatement st = conn.prepareStatement(sql);
 			st.setInt(1, mese);
 			st.setInt(2, mese);
+			st.setInt(3, min);
+			st.setInt(4, min);
 			ResultSet res = st.executeQuery();
 			while (res.next()) {
 

@@ -79,6 +79,8 @@ public class FXMLController {
     		return;
     	}
     	int mese = this.cmbMese.getValue().getValue();
+    	this.txtResult.appendText("mese:"+ this.cmbMese.getValue().getValue()+"\n");
+    	
     	String s = this.txtMinuti.getText();
     	if(s==null)
     	{

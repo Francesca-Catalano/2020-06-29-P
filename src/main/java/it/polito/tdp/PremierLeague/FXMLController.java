@@ -5,9 +5,13 @@
 package it.polito.tdp.PremierLeague;
 
 import java.net.URL;
+import java.time.LocalDate;
+import java.time.Month;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
+
+import it.polito.tdp.PremierLeague.model.Adiacenza;
 import it.polito.tdp.PremierLeague.model.Model;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -39,7 +43,7 @@ public class FXMLController {
     private TextField txtMinuti; // Value injected by FXMLLoader
 
     @FXML // fx:id="cmbMese"
-    private ComboBox<?> cmbMese; // Value injected by FXMLLoader
+    private ComboBox<Month> cmbMese; // Value injected by FXMLLoader
 
     @FXML // fx:id="cmbM1"
     private ComboBox<?> cmbM1; // Value injected by FXMLLoader
@@ -52,12 +56,53 @@ public class FXMLController {
 
     @FXML
     void doConnessioneMassima(ActionEvent event) {
+    List<Adiacenza> list =	this.model.connessioniMax(this.cmbMese.getValue().getValue());
+    if(list==null)
+    {
+    	this.txtResult.appendText("Errore lettura connessioni max\n");
+		return;
+    }
+    for(Adiacenza a : list)
+    {
+    	this.txtResult.appendText(a.toString()+"\n");
+    	
+    }
+    	
     	
     }
 
     @FXML
     void doCreaGrafo(ActionEvent event) {
+    	if(this.cmbMese.getValue()==null)
+    	{
+    		this.txtResult.appendText("Scegliere un mese!\n");
+    		return;
+    	}
+    	int mese = this.cmbMese.getValue().getValue();
+    	String s = this.txtMinuti.getText();
+    	if(s==null)
+    	{
+    		this.txtResult.appendText("Inserire i minuti!\n");
+    		return;	
+    	}
+    	int min;
+    	try {
+    		min= Integer.parseInt(s);
+    	}
+    	catch (NumberFormatException e) {
+    		this.txtResult.appendText("Formato non valido!\n");
+    		return;	
+		}
+    	this.model.creaGrafo(min,mese);
     	
+    	if(this.model.setV().size()==0)
+    	{
+    		this.txtResult.appendText("Non sono state giocate partire in questo mese!\n");
+    		return;		
+    	}
+		this.txtResult.appendText("VERTEX:"+ this.model.setV().size()+"\n");
+    	
+		this.txtResult.appendText("EDGE:"+ this.model.setE().size()+"\n");
     }
 
     @FXML
@@ -79,6 +124,12 @@ public class FXMLController {
     
     public void setModel(Model model) {
     	this.model = model;
+    	List<Month> list= new ArrayList<>();
+    for(int i=1;i <=12;i++)
+    {
+    list.add(Month.of(i));	
+    }
+    this.cmbMese.getItems().addAll(list);
   
     }
     
